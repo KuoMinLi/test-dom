@@ -4,7 +4,6 @@ import React, {
   useContext,
   useState,
   useEffect,
-  useRef,
 } from "https://esm.sh/react@18.2.0";
 import ReactDOM from "https://esm.sh/react-dom@18.2.0";
 
@@ -17,10 +16,8 @@ const dynamicJsonDefault = {
   posts: {},
 };
 
-// Context 創建
 const StorageContext = createContext(undefined);
 
-// Storage Provider 組件
 const StorageProvider = ({ children }) => {
   const [staticJson, setStaticJson] = useState(null);
   const [dynamicJson, setDynamicJson] = useState(dynamicJsonDefault);
@@ -50,12 +47,11 @@ const StorageProvider = ({ children }) => {
   );
 };
 
-// 上傳
 const ImageFrameMerger = () => {
   const { staticJson } = useContext(StorageContext);
   const { config } = staticJson || {};
   const [uploadedImage, setUploadedImage] = useState(null);
-  const canvasRef = useRef(null);
+  const [mergedImageUrl, setMergedImageUrl] = useState(null);
   const [frameImage, setFrameImage] = useState(null);
 
   useEffect(() => {
@@ -91,9 +87,7 @@ const ImageFrameMerger = () => {
   };
 
   const mergeImages = (userImage, frame) => {
-    if (!canvasRef.current) return;
-
-    const canvas = canvasRef.current;
+    const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
 
     // 設置畫布大小
@@ -106,8 +100,8 @@ const ImageFrameMerger = () => {
     // 計算目標區域在畫布上的位置 - 調整 Y 軸位置為靠上
     const targetWidth = 120;
     const targetHeight = 125;
-    const targetX = (canvas.width - targetWidth) / 2 +90;
-    const targetY = 80; 
+    const targetX = (canvas.width - targetWidth) / 2 + 90;
+    const targetY = 80;
 
     // 計算圖片縮放比例
     const scaleWidth = targetWidth / userImage.width;
@@ -130,14 +124,17 @@ const ImageFrameMerger = () => {
       scaledHeight
     );
 
+    // 將合成後的圖片轉換為 URL
+    const mergedUrl = canvas.toDataURL('image/png');
+    setMergedImageUrl(mergedUrl);
   };
 
   const downloadMergedImage = () => {
-    if (!canvasRef.current) return;
+    if (!mergedImageUrl) return;
     
     const link = document.createElement('a');
     link.download = 'merged-image.png';
-    link.href = canvasRef.current.toDataURL('image/png');
+    link.href = mergedImageUrl;
     link.click();
   };
 
@@ -154,10 +151,13 @@ const ImageFrameMerger = () => {
         </div>
         
         <div className="relative w-full mb-4 aspect-[0.57]">
-          <canvas
-            ref={canvasRef}
-            className="w-full h-full"
-          />
+          {mergedImageUrl && (
+            <img 
+              src={mergedImageUrl}
+              alt="Merged result"
+              className="w-full h-full object-contain"
+            />
+          )}
         </div>
 
         <button
@@ -172,7 +172,6 @@ const ImageFrameMerger = () => {
   );
 };
 
-// App 組件
 const App = () => {
   const { staticJson, dynamicJson, resetDynamicData } =
     useContext(StorageContext);
@@ -191,7 +190,6 @@ const App = () => {
   );
 };
 
-// 渲染應用
 ReactDOM.render(
   <StorageProvider>
     <App />
