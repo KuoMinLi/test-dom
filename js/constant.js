@@ -1,7 +1,7 @@
 const STORAGE_DATA = {
   config: {
     res: {
-      noImage1: "../images/ttt.png",
+      noImage1: "/test-dom//images/ttt.png",
     },
   },
 };
