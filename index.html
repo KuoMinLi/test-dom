@@ -1,0 +1,61 @@
+<html lang="zh-Hant">
+  <head>
+    <title>React App</title>
+    <meta name="description" content="Web site created using create-react-app">
+    <link rel="icon" href="./favicon.ico">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./css/style.css">
+    <script crossorigin="" src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.21.9/babel.min.js"></script>
+
+
+    <script>
+      tailwind.config = {
+        content: [
+          './js/main.jsx'
+        ],
+        theme: {
+          colors: {
+            primary: '#1D2ACE',
+            pink: '#FFDCFF',
+            pinkthick: '#F690EC',
+            white: '#ffffff',
+            black: '#2B2B2B',
+            blacklight: '#1E1E1E',
+            gray: '#D9D9D9',
+            yellow: '#FFEE00'
+          },
+          screens: {
+            'xs': { 'max': '320px' },
+            'md': { 'max': '1000px' },
+            'lg': { 'max': '1200px' },
+          },
+          extend: {
+            gridTemplateColumns: {
+              '314': 'repeat(auto-fill, minmax(314px, 1fr))'
+            },
+            gridAutoColumns: {
+              '314': 'minmax(314px, 1fr)'
+            },
+            animation: {
+              'spin-slow': 'spin 20s linear infinite',
+            }
+          }
+        },
+        variants: {
+
+        },
+        plugins: [],
+      }
+    </script>
+
+
+  </head>
+  <body>
+    <div id="root"></div>
+    <script defer type="text/babel" data-type="module" src="./js/main.jsx"></script>
+    
+</body>
+</html>
