@@ -1,8 +1,9 @@
-@import url(https://fonts.googleapis.com/earlyaccess/cwtexyen.css);
+@import url("https://fonts.googleapis.com/earlyaccess/cwtexyen.css");
+/* @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC+Rounded:wght@100;300;400;500;700;900&display=swap'); */
 
+/* font */
 :root {
-  --font-family: 'cwTeXYen', sans-serif;
-
+  --font-family: 'cwTeXYen', 'Noto Sans TC Rounded', sans-serif;
 }
 
 html, body {
@@ -10,12 +11,14 @@ html, body {
 
   margin: 0;
   padding: 0;
+  background-image: url(../images/question/desktop-background.png);
   background-size: cover;
   background-repeat: no-repeat;
   font-family: var(--font-family);
 
   width: 100%;
-  height: 100vh;
+  /* dvh / vh */
+  min-height: 100dvh; 
 }
 
 #root {
@@ -24,3 +27,235 @@ html, body {
   align-items: center;
   justify-content: center;
 }
+
+
+.button-width {
+  width: 135px;
+}
+
+.button-answer-width {
+  width: 200px;
+}
+
+@media (max-width: 376px) {
+  .button-width {
+    width: 152px;
+  }
+  .button-answer-width {
+    width: 180px;
+  }  
+}
+
+@media (max-width: 414px) {
+  .result-content {
+      padding-left: 32px;
+      padding-right: 32px;
+  }
+}
+
+@keyframes swing {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(15deg);
+  }
+  50% {
+    transform: rotate(0deg);
+  }
+  75% {
+    transform: rotate(-15deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes rotateClockwise {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes rotateCounterClockwise {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+/* 使用 cubic-bezier 來實現進出時的減速效果 */
+img[src*="footprint"] {
+  animation: swing 1.25s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite;
+  transform-origin: center center;
+}
+
+img[src*="cat-icon"] {
+  animation: catAnimation 3s infinite;
+  transform-origin: center center;
+}
+
+img[src*="crystal-ball"] {
+  animation: catAnimation 5s infinite;
+  transform-origin: center center;
+}
+
+@keyframes catAnimation {
+  0%, 15% { transform: rotate(0deg); }
+  17.5% { transform: rotate(10deg); }
+  20% { transform: rotate(0deg); }
+  22.5% { transform: rotate(-10deg); }
+  25% { transform: rotate(0deg); }
+  
+  27.5% { transform: rotate(10deg); }
+  30% { transform: rotate(0deg); }
+  32.5% { transform: rotate(-10deg); }
+  35% { transform: rotate(0deg); }
+  
+  37.5% { transform: rotate(10deg); }
+  40% { transform: rotate(0deg); }
+  42.5% { transform: rotate(-10deg); }
+  45% { transform: rotate(0deg); }
+  
+  /* 暫停一下 */
+  45.1%, 50% { transform: rotate(0deg); }
+  
+  50.1%, 75% { 
+    animation-name: var(--rotation-direction, rotateClockwise);
+    animation-duration: 1s;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  75.1%, 100% { transform: rotate(0deg); }
+}
+
+button:hover img,
+a:hover img,
+img[role="button"]:hover {
+  filter: brightness(1.2);
+  transition: filter 0.3s ease;
+}
+
+button, 
+a, 
+img[role="button"] {
+  cursor: pointer;
+  transition: filter 0.3s ease;
+}
+
+/* Momo  */
+div[style*="backgroundColor: f305bd"]:hover {
+  filter: brightness(1.2);
+}
+
+/* PChome */
+div[style*="backgroundColor: d7000f"]:hover {
+  filter: brightness(1.2);
+}
+
+button img,
+a img,
+img[role="button"] {
+  transition: filter 0.3s ease;
+}
+
+/* 防止某些元素重複應用效果 */
+.outcome-container img:not([role="button"]) {
+  filter: none;
+  transition: none;
+}
+
+.start-button {
+  transition: transform 0.3s ease-in-out;
+}
+.start-button:hover {
+  transform: rotate(3deg);
+}
+
+.restart-button {
+  transition: transform 0.3s ease-in-out;
+}
+.restart-button:hover {
+  transform: rotate(-5deg);
+}
+
+.skip-button {
+  transition: transform 0.3s ease-in-out;
+}
+.skip-button:hover {
+  transform: rotate(-3deg);
+}
+
+.next-button {
+  transition: transform 0.3s ease-in-out;
+}
+.next-button:hover {
+  transform: rotate(3deg);
+}
+
+.share-button {
+  transition: transform 0.3s ease-in-out;
+}
+.share-button:hover {
+  transform: rotate(5deg);
+}
+
+.shop-button {
+  transition: transform 0.3s ease-in-out;
+}
+.shop-button:hover {
+  transform: rotate(4deg);
+}
+/* 
+@keyframes shake {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  10%, 50%, 90% {
+    transform: translate(-2px, -2px);
+  }
+  20%, 60%, 100% {
+    transform: translate(2px, 2px);
+  }
+  30%, 70% {
+    transform: translate(2px, -2px);
+  }
+  40%, 80% {
+    transform: translate(-2px, 2px);
+  }
+}
+
+.card-frame-img {
+  animation: shake 10s ease-in-out infinite;
+} */
+
+@keyframes float {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateY(-10px) scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.8;
+  }
+}
+
+.cloud-animation {
+  animation: float 6s ease-in-out infinite;
+  pointer-events: none; /* 確保雲不影響鼠標事件 */
+}
+
+  @keyframes rotateHourglass {
+      0% {
+          transform: rotate(0deg);
+      }
+      30% {
+          transform: rotate(360deg);
+      }
+      100% {
+          transform: rotate(360deg);
+      }
+  }
+  .hourglass-spin {
+      animation: rotateHourglass 2s infinite ease-in-out;
+  }
