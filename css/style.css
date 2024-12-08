@@ -11,7 +11,7 @@ html, body {
 
   margin: 0;
   padding: 0;
-  background-image: url(/test-dom/images/question/desktop-background.png);
+  background-image: url(/test-dom/images/backgrounds/desktop-background.png);
   background-size: cover;
   background-repeat: no-repeat;
   font-family: var(--font-family);
@@ -258,4 +258,33 @@ img[role="button"] {
   }
   .hourglass-spin {
       animation: rotateHourglass 2s infinite ease-in-out;
+  }
+
+  @keyframes marker-glow {
+    0%, 100% { 
+      opacity: 0;
+      transform: translateX(0);
+    }
+    50% { 
+      opacity: 0.3;
+      transform: translateX(3px);
+    }
+  }
+  
+  .process-marker {
+    position: absolute;
+    top: 56%;
+    transform: translateY(-50%);
+    z-index: 30;
+    pointer-events: none;
+    
+    svg {
+      filter: drop-shadow(0 0 2px rgba(101, 67, 33, 0.3));
+      animation: marker-glow 1.5s ease-in-out infinite;
+    }
+  
+    path {
+      stroke: #000000;
+      opacity: 0.9;
+    }
   }

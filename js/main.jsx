@@ -13,6 +13,43 @@ const MAX_FILE_SIZE = 100 * 1024 * 1024; // 5MB
 const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png"];
 const CANVAS_WIDTH = 414;
 const CANVAS_HEIGHT = CANVAS_WIDTH * 1.75;
+const ProcessMarker = ({ 
+  width = "60px",
+  height = "20px",
+  left = "50px",
+  color = "#8B4513",
+  strokeWidth = 1.5,
+  questionId = 1
+}) => {
+  const baseLeft = parseInt(left);
+  const additionalOffset = (questionId - 1) * 22; // 每題增加 15px
+  const finalLeft = `${baseLeft + additionalOffset}px`;
+
+  return (
+    <div 
+      className="process-marker"
+      style={{
+        left: finalLeft
+      }}
+    >
+      <svg 
+        viewBox="0 0 40 30"
+        style={{
+          width: width,
+          height: height
+        }}
+      >
+        <path 
+          d="M5 25 L35 25 L48 2 L18 2 Z" 
+          style={{
+            fill: color,
+            strokeWidth: strokeWidth
+          }}
+        />
+      </svg>
+    </div>
+  );
+};
 
 const CardFrame = memo(({ src, alt, config, currentQuestionIndex }) => {
     const footprintPositions = [
@@ -60,7 +97,8 @@ const StartPage = memo(({ config, onStart, currentQuestionIndex }) => {
     return (
         <div className="flex w-full min-h-[100dvh] items-center justify-center max-w-[430px]">
             <div className="relative w-full">
-                <CardFrame src={config.cardStart} alt="card" config={config} currentQuestionIndex={currentQuestionIndex} />
+                <CardFrame src={config.cardStart} 
+                alt="card" config={config} currentQuestionIndex={currentQuestionIndex} />
                 <button
                     className="absolute bottom-[65px] left-[calc(50%-76px)]"
                     onClick={onStart}
@@ -210,12 +248,24 @@ const QuestionPage = memo(({ currentQuestion, onAnswer, config, catName }) => {
                     alt="question"
                     config={config}
                 />
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center w-full">
-                    <img
-                        className="w-full max-w-[280px] mx-auto"
-                        src={config.step[`step${currentQuestion.id}`]}
-                        alt="step"
-                    />
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center w-full">  
+                    <div className="relative">
+                      <img
+                          className="w-full max-w-[280px] mx-auto"
+                          src={config.step[`step${currentQuestion.id}`]}
+                          alt="step"
+                      />
+                      {currentQuestion.id !== (1 || 12) &&
+                        <ProcessMarker 
+                            width="40px"
+                            height="20px"
+                            left="83px"
+                            color="white"
+                            strokeWidth={0}
+                            questionId={currentQuestion.id}
+                          />
+                      }
+                    </div>
                     <div className="mt-6 relative px-6">
                         <img
                             className="w-full max-w-[280px] mx-auto"
@@ -369,11 +419,12 @@ const FileUpload = ({ handleImageUpload, isLoading, config }) => {
                 disabled={isLoading}
                 aria-label="Upload image"
             />
-            <button disabled={isLoading}  type="button">
+            <button disabled={isLoading} type="button" style={{ cursor: "pointer"}}>
                 <img
+                    style={{ cursor: "pointer"}}
                     className="button-width"
-                    src={config.buttons.upLoadButton}
-                    alt=""
+                    src={config.buttons.uploadButton}
+                    alt="upload button"
                 />
             </button>
         </div>
