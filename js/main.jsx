@@ -255,7 +255,7 @@ const QuestionPage = memo(({ currentQuestion, onAnswer, config, catName }) => {
         <div className="flex w-full min-h-[100dvh] items-center justify-center max-w-[430px]">
             <div className="relative w-full">
                 <CardFrame
-                    imgType="cardQuestion"
+                    imgType="question"
                     config={config}
                 />
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center w-full">  
