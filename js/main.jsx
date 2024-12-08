@@ -51,7 +51,7 @@ const ProcessMarker = ({
   );
 };
 
-const CardFrame = memo(({ src, alt, config, currentQuestionIndex }) => {
+const CardFrame = memo(({ config, currentQuestionIndex, imgType }) => {
     const footprintPositions = [
         "top-[17px] left-[17px]",
         "top-[17px] right-[17px]",
@@ -59,10 +59,16 @@ const CardFrame = memo(({ src, alt, config, currentQuestionIndex }) => {
         "bottom-[17px] right-[17px]",
     ];
 
+    const backgroundImages = {
+        start: config.cardStart,
+        cloud: config.cardCloud,
+        question: config.cardQuestion
+    };
+
     return (
         <div className="h-full relative w-full max-w-[430px] p-[12px] bg-[#402529] border rounded-[15px] overflow-hidden">
             <div className="relative w-full p-[16px] bg-[#FCDECF] border border-black rounded-[10px] min-h-[calc(180vw-32px)]">
-            {currentQuestionIndex === -1 &&
+            {currentQuestionIndex === -1 && (
             <div className="absolute inset-0 z-10 pointer-events-none">
                   <img
                       src={config.cloudLeft}
@@ -72,14 +78,21 @@ const CardFrame = memo(({ src, alt, config, currentQuestionIndex }) => {
                   <img
                       src={config.cloudRight}
                       alt="cloud-right"
-                      className="w-[7rem] absolute top-[60%] right-[50px] w-[150px] cloud-animation"
+                      className="absolute top-[60%] right-[50px] w-[150px] cloud-animation"
                   />
               </div>
-            }
-            {/* <div className="relative z-20 w-full p-[16px] bg-[#FCDECF] border border-black rounded-[10px]"> */}
-                <img className="object-contain w-full" 
-                    src={src} 
-                    alt={alt} />
+            )}
+                {Object.entries(backgroundImages).map(([type, src]) => (
+                    <img
+                        key={type}
+                        className={`object-contain w-full transition-opacity duration-300 ${
+                            imgType === type ? "opacity-100" : "opacity-0 absolute inset-0"
+                        }`}
+                        src={src}
+                        alt={`background-${type}`}
+                    />
+                ))}
+
                 {footprintPositions.map((position, index) => (
                     <img
                         key={`footprint-${index}`}
@@ -97,8 +110,7 @@ const StartPage = memo(({ config, onStart, currentQuestionIndex }) => {
     return (
         <div className="flex w-full min-h-[100dvh] items-center justify-center max-w-[430px]">
             <div className="relative w-full">
-                <CardFrame src={config.cardStart} 
-                alt="card" config={config} currentQuestionIndex={currentQuestionIndex} />
+                <CardFrame imgType="start" config={config} currentQuestionIndex={currentQuestionIndex} />
                 <button
                     className="absolute bottom-[65px] left-[calc(50%-76px)]"
                     onClick={onStart}
@@ -170,8 +182,7 @@ const NameInputPage = memo(({ config, onSubmitName }) => {
         <div className="flex w-full min-h-[100dvh] items-center justify-center max-w-[430px]">
             <div className="relative w-full">
                 <CardFrame
-                    src={config.cardCloud}
-                    alt="name-input"
+                    imgType="cloud"
                     config={config}
                 />
                 <div
@@ -244,8 +255,7 @@ const QuestionPage = memo(({ currentQuestion, onAnswer, config, catName }) => {
         <div className="flex w-full min-h-[100dvh] items-center justify-center max-w-[430px]">
             <div className="relative w-full">
                 <CardFrame
-                    src={config.cardQuestion}
-                    alt="question"
+                    imgType="cardQuestion"
                     config={config}
                 />
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center w-full">  
@@ -317,8 +327,7 @@ const LoadingPage = memo(({ config }) => (
     <div className="flex w-full min-h-[100dvh] items-center justify-center max-w-[430px]">
         <div className="relative w-full">
             <CardFrame
-                src={config.cardCloud}
-                alt="cloud-background"
+               imgType="cloud"
                 config={config}
             />
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
@@ -346,8 +355,7 @@ const UploadErrorPage = memo(({ config, onRetry, onRestart }) => (
     <div className="flex w-full min-h-[100dvh] items-center justify-center max-w-[430px]">
         <div className="relative w-full">
             <CardFrame
-                src={config.cardCloud}
-                alt="cloud-background"
+                imgType="cloud"
                 config={config}
             />
             <div
@@ -398,8 +406,7 @@ const CloudCard = memo(({ children, config }) => {
         <div className="flex w-full min-h-[100vh] items-center justify-center max-w-[430px]">
             <div className="relative w-full">
                 <CardFrame
-                    src={config.cardCloud}
-                    alt="cardCloud"
+                    imgType="cloud"
                     config={config}
                 />
                 {children}
