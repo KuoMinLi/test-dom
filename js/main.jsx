@@ -577,8 +577,8 @@ const ImageFrameMerger = ({
             if (userImage) {
                 const targetWidth = 120 * CANVAS_SCALE;
                 const targetHeight = 125 * CANVAS_SCALE;
-                const targetX = (canvas.width - targetWidth) / 2 + 90;
-                const targetY = 80;
+                const targetX = (canvas.width - targetWidth) / 2 + (90 * CANVAS_SCALE);
+                const targetY = 80 * CANVAS_SCALE;
 
                 // 創建一個臨時的canvas來處理使用者圖片的背景
                 const tempCanvas = document.createElement("canvas");
