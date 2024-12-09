@@ -21,18 +21,18 @@ const STORAGE_DATA = {
     armAndHammerLogo: "/test-dom/images/footer/arm-&-hammer-logo.png",
     // questions
     questions: [
-      { id: 1, text: "領養的第一天，⋯", mbtiA: "E", mbtiB: "I" },
-      { id: 2, text: "新買了一個貓跳台，{catName} ⋯", mbtiA: "S", mbtiB: "N" },
-      { id: 3, text: "發現貓咪跳不上去，移動了跳台的位置，{catName} ⋯", mbtiA: "N", mbtiB: "S" },
-      { id: 4, text: "初次使用貓砂，{catName}⋯", special: "premium-sensitive" },
-      { id: 5, text: "此時突然飛來一張蟑螂，{catName} 會⋯", mbtiA: "S", mbtiB: "N" },
-      { id: 6, text: "結果不小心打翻貓砂盆，{catName} ⋯", special: "premium-odor" },
-      { id: 7, text: "當家裡廁所買了新的芳香劑，{catName} ⋯", specialA: "premium-odor", specialB: "premium-deodorize" },
-      { id: 8, text: "當 {catName} 不小心被關在廁所，牠⋯", mbtiA: "T", mbtiB: "F" },
-      { id: 9, text: "把 {catName} 救出來後，牠⋯", mbtiA: "T", mbtiB: "F" },
-      { id: 10, text: "有一天朋友來家裡，不小心踩到 {catName}，牠⋯", mbtiA: "F", mbtiB: "T" },
-      { id: 11, text: "朋友想餵貓咪吃肉泥，而 {catName}⋯" },
-      { id: 12, text: "餵完肉泥後，朋友想摸貓，而 {catName}⋯", mbtiA: "P", mbtiB: "J" }
+      { id: 1, text: "{catName}\n來家裡的第一天⋯", mbtiA: "E", mbtiB: "I" },
+      { id: 2, text: "新買了一個貓跳台⋯", mbtiA: "S", mbtiB: "N" },
+      { id: 3, text: "發現 {catName} 跳不上去，移動了跳台的位置", mbtiA: "N", mbtiB: "S" },
+      { id: 4, text: "初次使用貓砂⋯", special: "premium-sensitive" },
+      { id: 5, text: "此時突然飛來一隻蝴蝶⋯", mbtiA: "S", mbtiB: "N" },
+      { id: 6, text: "結果不小心打翻貓砂盆⋯", special: "premium-odor" },
+      { id: 7, text: "當家裡廁所買了\n新的芳香劑⋯", specialA: "premium-odor", specialB: "premium-deodorize" },
+      { id: 8, text: "當 {catName} 不小心被關在廁所，牠會⋯", mbtiA: "T", mbtiB: "F" },
+      { id: 9, text: "你把 {catName} 救出來後\n牠⋯", mbtiA: "T", mbtiB: "F" },
+      { id: 10, text: "有一天朋友來家裡，\n不小心踩到 {catName}，\n牠會⋯", mbtiA: "F", mbtiB: "T" },
+      { id: 11, text: "朋友想餵 {catName}\n吃肉泥⋯" },
+      { id: 12, text: "餵完肉泥後，朋友想摸貓\n牠會⋯", mbtiA: "P", mbtiB: "J" }
     ],
     catPersona: {
       ISTJ: "守紀乖乖喵",

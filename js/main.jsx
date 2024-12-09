@@ -11,8 +11,10 @@ import STORAGE_DATA from "./js/constant.js";
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 5MB
 const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png"];
+const CANVAS_SCALE = 1.519;
 const CANVAS_WIDTH = 414;
 const CANVAS_HEIGHT = CANVAS_WIDTH * 1.75;
+
 const ProcessMarker = ({ 
   width = "60px",
   height = "20px",
@@ -67,7 +69,9 @@ const CardFrame = memo(({ config, currentQuestionIndex, imgType }) => {
 
     return (
         <div className="h-full relative w-full max-w-[430px] p-[12px] bg-[#402529] border rounded-[15px] overflow-hidden">
-            <div className="relative w-full p-[16px] bg-[#FCDECF] border border-black rounded-[10px] min-h-[500px]">
+            <div className="relative w-full p-[16px] bg-[#FCDECF] border border-black rounded-[10px]  min-h-[500px]
+            ">
+                          {/* min-h-[calc(180vw-32px)]" */}
             {currentQuestionIndex === -1 && (
             <div className="absolute inset-0 z-10 pointer-events-none">
                   <img
@@ -92,7 +96,6 @@ const CardFrame = memo(({ config, currentQuestionIndex, imgType }) => {
                         alt={`background-${type}`}
                     />
                 ))}
-
                 {footprintPositions.map((position, index) => (
                     <img
                         key={`footprint-${index}`}
@@ -287,7 +290,7 @@ const QuestionPage = memo(({ currentQuestion, onAnswer, config, catName }) => {
             </h2> */}
                         <h2
                             className="max-w-[280px] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
-                          text-[14pt] text-center overflow-hidden line-clamp-3 leading-[26px] tracking-[2px]"
+                          text-[14pt] text-center overflow-hidden line-clamp-3 leading-[26px] tracking-[2px] whitespace-pre-line"
                             // style={{
                             //     lineHeight: "26px", 
                             //     letterSpacing: "2px",
@@ -563,8 +566,8 @@ const ImageFrameMerger = ({
                 return;
             }
 
-            canvas.width = CANVAS_WIDTH;
-            canvas.height = CANVAS_HEIGHT;
+            canvas.width = CANVAS_WIDTH * CANVAS_SCALE;
+            canvas.height = CANVAS_HEIGHT * CANVAS_SCALE;
 
             // 先填充白色背景
             ctx.fillStyle = "#FFFFFF";
@@ -572,8 +575,8 @@ const ImageFrameMerger = ({
 
             // 繪製使用者照片
             if (userImage) {
-                const targetWidth = 120;
-                const targetHeight = 125;
+                const targetWidth = 120 * CANVAS_SCALE;
+                const targetHeight = 125 * CANVAS_SCALE;
                 const targetX = (canvas.width - targetWidth) / 2 + 90;
                 const targetY = 80;
 
@@ -626,10 +629,10 @@ const ImageFrameMerger = ({
                     const litterImage = new Image();
                     litterImage.crossOrigin = "anonymous";
                     litterImage.onload = () => {
-                        const litterWidth = 100;
-                        const litterHeight = 100;
+                        const litterWidth = 100 * CANVAS_SCALE;
+                        const litterHeight = 100 * CANVAS_SCALE;
                         const litterX = (canvas.width - litterWidth) / 2;
-                        const litterY = canvas.height - litterHeight - 40;
+                        const litterY = canvas.height - litterHeight - 40 * CANVAS_SCALE;
 
                         ctx.drawImage(
                             litterImage,
@@ -659,15 +662,15 @@ const ImageFrameMerger = ({
 
             // 將文字繪製邏輯抽出來，避免重複
             function drawText() {
-                ctx.font = "18px 'Noto Sans TC Rounded'";
+                ctx.font = `${18 * CANVAS_SCALE}px 'Noto Sans TC Rounded'`;
                 ctx.fillStyle = "#000000";
                 ctx.textAlign = "left";
                 ctx.textBaseline = "top";
 
-                const textX = 60;
-                const textY = 60;
-                const maxWidth = 250;
-                const lineHeight = 26;
+                const textX = 60 * CANVAS_SCALE;
+                const textY = 60 * CANVAS_SCALE;
+                const maxWidth = 250 * CANVAS_SCALE;
+                const lineHeight = 26 * CANVAS_SCALE;
 
                 const text = catName
                     ? `${catName} 性格\n代表的魔法物是...`
