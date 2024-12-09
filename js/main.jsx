@@ -67,7 +67,7 @@ const CardFrame = memo(({ config, currentQuestionIndex, imgType }) => {
 
     return (
         <div className="h-full relative w-full max-w-[430px] p-[12px] bg-[#402529] border rounded-[15px] overflow-hidden">
-            <div className="relative w-full p-[16px] bg-[#FCDECF] border border-black rounded-[10px] min-h-[calc(180vw-32px)]">
+            <div className="relative w-full p-[16px] bg-[#FCDECF] border border-black rounded-[10px] min-h-[500px]">
             {currentQuestionIndex === -1 && (
             <div className="absolute inset-0 z-10 pointer-events-none">
                   <img
