@@ -180,40 +180,6 @@ const NameInputPage = memo(({ config, onSubmitName }) => {
         onSubmitName(trimmedName);
     };
 
-    useEffect(() => {
-        const visualViewport = window.visualViewport;
-        
-        const handleViewportChange = () => {
-          const inputContainer = document.querySelector('.name-input-container');
-          if (!inputContainer) return;
-          
-          const viewportHeight = visualViewport.height;
-          const inputRect = inputContainer.getBoundingClientRect();
-          const inputBottom = inputRect.bottom;
-          
-          // 計算垂直和水平偏移
-          if (inputBottom > viewportHeight) {
-            const verticalOffset = inputBottom - viewportHeight + 20;
-            const horizontalOffset = visualViewport.offsetLeft;
-            
-            inputContainer.style.transform = `
-              translateY(-${verticalOffset}px) 
-              translateX(-${horizontalOffset}px)
-            `;
-          } else {
-            inputContainer.style.transform = 'translate(0)';
-          }
-        };
-      
-        visualViewport?.addEventListener('resize', handleViewportChange);
-        visualViewport?.addEventListener('scroll', handleViewportChange);
-        
-        return () => {
-          visualViewport?.removeEventListener('resize', handleViewportChange);
-          visualViewport?.removeEventListener('scroll', handleViewportChange);
-        };
-      }, []);
-
     return (
         <div className="flex w-full min-h-[100dvh] items-center justify-center max-w-[430px]">
             <div className="relative w-full">
@@ -222,7 +188,7 @@ const NameInputPage = memo(({ config, onSubmitName }) => {
                     config={config}
                 />
                 <div
-                    className="name-input-container absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center 
+                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center 
           w-full px-8 flex flex-col items-center justify-center gap-6"
                 >
                     <h2 className="mb-6 text-xl font-semibold">輸入你家貓咪的名字吧！</h2>
