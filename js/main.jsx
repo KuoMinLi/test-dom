@@ -180,9 +180,33 @@ const NameInputPage = memo(({ config, onSubmitName }) => {
         onSubmitName(trimmedName);
     };
 
+    useEffect(() => {
+        const visualViewport = window.visualViewport;
+        
+        const handleResize = () => {
+          const inputContainer = document.querySelector('.name-input-container');
+          if (!inputContainer) return;
+          
+          const viewportHeight = visualViewport.height;
+          const inputRect = inputContainer.getBoundingClientRect();
+          const inputBottom = inputRect.bottom;
+          
+          if (inputBottom > viewportHeight) {
+            const offset = inputBottom - viewportHeight + 20; // 額外預留空間
+            inputContainer.style.transform = `translateY(-${offset}px)`;
+          } else {
+            inputContainer.style.transform = 'translateY(0)';
+          }
+        };
+  
+        visualViewport?.addEventListener('resize', handleResize);
+        
+        return () => visualViewport?.removeEventListener('resize', handleResize);
+    }, []);
+
     return (
         <div className="flex w-full min-h-[100dvh] items-center justify-center max-w-[430px]">
-            <div className="relative w-full">
+            <div className="relative w-full name-input-container ">
                 <CardFrame
                     imgType="cloud"
                     config={config}
