@@ -24,7 +24,7 @@ const ProcessMarker = ({
   questionId = 1
 }) => {
   const baseLeft = parseInt(left);
-  const additionalOffset = (questionId - 1) * 22; // 每題增加 15px
+  const additionalOffset = (questionId - 1) * 21.5; //px
   const finalLeft = `${baseLeft + additionalOffset}px`;
 
   return (
@@ -72,7 +72,7 @@ const CardFrame = memo(({ config, currentQuestionIndex, imgType }) => {
             <div className="relative w-full p-[16px] bg-[#FCDECF] border border-black rounded-[10px]  min-h-[500px]
             ">
                           {/* min-h-[calc(180vw-32px)]" */}
-            {currentQuestionIndex === -1 && (
+            {/* {currentQuestionIndex === -1 && (
             <div className="absolute inset-0 z-10 pointer-events-none">
                   <img
                       src={config.cloudLeft}
@@ -85,7 +85,7 @@ const CardFrame = memo(({ config, currentQuestionIndex, imgType }) => {
                       className="absolute top-[60%] right-[50px] w-[150px] cloud-animation"
                   />
               </div>
-            )}
+            )} */}
                 {Object.entries(backgroundImages).map(([type, src]) => (
                     <img
                         key={type}
@@ -177,9 +177,32 @@ const NameInputPage = memo(({ config, onSubmitName }) => {
             setError("名字太長囉！");
             return;
         }
-
         onSubmitName(trimmedName);
     };
+
+    useEffect(() => {
+        const visualViewport = window.visualViewport;
+        
+        const handleResize = () => {
+          const inputContainer = document.querySelector('.name-input-container');
+          if (!inputContainer) return;
+          
+          const viewportHeight = visualViewport.height;
+          const inputRect = inputContainer.getBoundingClientRect();
+          const inputBottom = inputRect.bottom;
+          
+          if (inputBottom > viewportHeight) {
+            const offset = inputBottom - viewportHeight + 20; // 額外預留空間
+            inputContainer.style.transform = `translateY(-${offset}px)`;
+          } else {
+            inputContainer.style.transform = 'translateY(0)';
+          }
+        };
+  
+        visualViewport?.addEventListener('resize', handleResize);
+        
+        return () => visualViewport?.removeEventListener('resize', handleResize);
+    }, []);
 
     return (
         <div className="flex w-full min-h-[100dvh] items-center justify-center max-w-[430px]">
@@ -189,10 +212,10 @@ const NameInputPage = memo(({ config, onSubmitName }) => {
                     config={config}
                 />
                 <div
-                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center 
+                    className="name-input-container absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center 
           w-full px-8 flex flex-col items-center justify-center gap-6"
                 >
-                    <h2 className="mb-6 text-xl">輸入你家貓咪的名字吧！</h2>
+                    <h2 className="mb-6 text-xl font-semibold">輸入你家貓咪的名字吧！</h2>
                     <img
                         className="w-[200px] mt-6"
                         src={config.crystalBall}
@@ -248,6 +271,19 @@ const NameInputPage = memo(({ config, onSubmitName }) => {
 });
 
 const QuestionPage = memo(({ currentQuestion, onAnswer, config, catName }) => {
+
+    const handleButtonClick = async (choice) => {
+        const button = document.activeElement;
+        if (button) {
+            button.blur(); // 移除焦點
+            button.style.pointerEvents = 'none'; // 防止重複點擊
+            setTimeout(() => {
+                button.style.pointerEvents = 'auto';
+            }, 300);
+        }
+        onAnswer(choice);
+    };
+
     const questionText = currentQuestion.text.replace("{catName}", catName);
 
     const addSpaceBetweenChars = (text) => {
@@ -272,7 +308,7 @@ const QuestionPage = memo(({ currentQuestion, onAnswer, config, catName }) => {
                         <ProcessMarker 
                             width="40px"
                             height="20px"
-                            left="83px"
+                            left="84px"
                             color="white"
                             strokeWidth={0}
                             questionId={currentQuestion.id}
@@ -285,11 +321,11 @@ const QuestionPage = memo(({ currentQuestion, onAnswer, config, catName }) => {
                             src={config.questionArea}
                             alt="question-area"
                         />
-                        {/* <h2 className="max-w-[200px] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xl">
+                        {/* <h2 className="font-semibold max-w-[200px] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xl">
               {questionText}
             </h2> */}
                         <h2
-                            className="max-w-[280px] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+                            className="font-semibold max-w-[280px] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
                           text-[14pt] text-center overflow-hidden line-clamp-3 leading-[26px] tracking-[2px] whitespace-pre-line"
                             // style={{
                             //     lineHeight: "26px", 
@@ -300,19 +336,22 @@ const QuestionPage = memo(({ currentQuestion, onAnswer, config, catName }) => {
                         </h2>
                     </div>
                     <img
-                        className="max-h-[135px] h-full mx-auto"
+                        className="max-h-[155px] h-full mx-auto"
                         src={config.questionImage[`Q${currentQuestion.id}`]}
                         alt="question"
                     />
                     <div className="flex flex-col gap-3 items-center mt-6">
-                        <button onClick={() => onAnswer("A")}>
+                        <button onClick={() => handleButtonClick("A")}
+                             onTouchEnd={(e) => e.target.blur()} > 
+                             {/* 觸控結束時移除焦點 */}
                             <img
                                 className="button-answer-width"
                                 src={config.buttons[`${currentQuestion.id}A`]}
                                 alt="optionA"
                             />
                         </button>
-                        <button onClick={() => onAnswer("B")}>
+                        <button onClick={() => handleButtonClick("B")}
+                            onTouchEnd={(e) => e.target.blur()} >
                             <img
                                 className="button-answer-width"
                                 src={config.buttons[`${currentQuestion.id}B`]}
@@ -365,7 +404,7 @@ const UploadErrorPage = memo(({ config, onRetry, onRestart }) => (
                 className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
             w-full flex flex-col items-center justify-center"
             >
-                {/* <h2 className="text-2xl mb-6">上傳失敗</h2> */}
+                {/* <h2 className="text-2xl mb-6 font-semibold">上傳失敗</h2> */}
                 <div className="flex flex-col items-center justify-center">
                   {/* 上傳失敗 */}
                   <img
@@ -583,22 +622,22 @@ const ImageFrameMerger = ({
                 // 創建一個臨時的canvas來處理使用者圖片的背景
                 const tempCanvas = document.createElement("canvas");
                 const tempCtx = tempCanvas.getContext("2d");
-                tempCanvas.width = targetWidth;
-                tempCanvas.height = targetHeight;
+                tempCanvas.width = targetWidth * 5;
+                tempCanvas.height = targetHeight * 5;
 
                 // 在臨時canvas上填充白色背景
                 tempCtx.fillStyle = "#FFFFFF";
-                tempCtx.fillRect(0, 0, targetWidth, targetHeight);
+                tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
 
-                const scaleWidth = targetWidth / userImage.width;
-                const scaleHeight = targetHeight / userImage.height;
+                const scaleWidth = tempCanvas.width / userImage.width;
+                const scaleHeight = tempCanvas.height / userImage.height;
                 const scale = Math.min(scaleWidth, scaleHeight);
 
                 const scaledWidth = userImage.width * scale;
                 const scaledHeight = userImage.height * scale;
 
-                const offsetX = (targetWidth - scaledWidth) / 2;
-                const offsetY = (targetHeight - scaledHeight) / 2;
+                const offsetX = (tempCanvas.width - scaledWidth) / 2;
+                const offsetY = (tempCanvas.height - scaledHeight) / 2;
 
                 // 在臨時canvas上繪製縮放後的圖片
                 tempCtx.drawImage(
@@ -700,7 +739,7 @@ const ImageFrameMerger = ({
                 className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center 
                   w-full px-8 flex flex-col items-center justify-center gap-6"
             >
-                <h2 className="text-xl mb-6 whitespace-pre-line">
+                <h2 className="text-xl mb-6 whitespace-pre-line font-semibold">
                     {`上傳一張 ${catName} 的\n可愛照片吧！`}
                 </h2>
                 <img
@@ -1236,7 +1275,7 @@ const App = () => {
         return () => window.removeEventListener("resize", checkDevice);
     }, []);
 
-    const calculateMBTI = useCallback(() => {
+    const calculateMBTI = useCallback((answers) => {
         let mbtiCounts = {
             E: 0,
             I: 0,
@@ -1265,7 +1304,7 @@ const App = () => {
         ].join("");
 
         setMbtiResult(mbti);
-    }, [answers]);
+    }, []);
 
     const currentQuestionData = useMemo(() => {
         if (
@@ -1286,22 +1325,23 @@ const App = () => {
         setIsLoading(true);
         try {
             //await new Promise(resolve => setTimeout(resolve, 1000));
-            
             const currentQuestion = QUESTIONS[currentQuestionIndex];
             const newAnswers = { ...answers, [currentQuestion.id]: answer };
             setAnswers(newAnswers);
 
-            if (currentQuestion.special) {
-                if (answer === "A") setRecommendedLitter(currentQuestion.special);
-            } else if (currentQuestion.specialA && answer === "A") {
-                setRecommendedLitter(currentQuestion.specialA);
-            } else if (currentQuestion.specialB && answer === "B") {
-                setRecommendedLitter(currentQuestion.specialB);
+            if (recommendedLitter === '') {
+                if ((currentQuestionIndex === 3 || currentQuestionIndex === 5) && answer === "A") {
+                    setRecommendedLitter(currentQuestion.specialA);
+                } else if (answer === "A" && currentQuestion.specialA) {
+                    setRecommendedLitter(currentQuestion.specialA);
+                } else if (answer === "B" && currentQuestion.specialB) {
+                    setRecommendedLitter(currentQuestion.specialB);
+                }
             }
 
             // 進入結果之前上傳頁
             if (currentQuestionIndex === QUESTIONS.length - 1) {
-                calculateMBTI();
+                calculateMBTI(newAnswers); // 將第12題的答案計算出MBTI
                 setShowImageUpload(true);
                 setCurrentQuestionIndex(currentQuestionIndex + 1);
             } else {
