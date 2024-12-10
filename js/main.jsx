@@ -183,7 +183,7 @@ const NameInputPage = memo(({ config, onSubmitName }) => {
     useEffect(() => {
         const visualViewport = window.visualViewport;
         
-        const handleResize = () => {
+        const handleViewportChange = () => {
           const inputContainer = document.querySelector('.name-input-container');
           if (!inputContainer) return;
           
@@ -191,18 +191,28 @@ const NameInputPage = memo(({ config, onSubmitName }) => {
           const inputRect = inputContainer.getBoundingClientRect();
           const inputBottom = inputRect.bottom;
           
+          // 計算垂直和水平偏移
           if (inputBottom > viewportHeight) {
-            const offset = inputBottom - viewportHeight + 20; // 額外預留空間
-            inputContainer.style.transform = `translateY(-${offset}px)`;
+            const verticalOffset = inputBottom - viewportHeight + 20;
+            const horizontalOffset = visualViewport.offsetLeft;
+            
+            inputContainer.style.transform = `
+              translateY(-${verticalOffset}px) 
+              translateX(-${horizontalOffset}px)
+            `;
           } else {
-            inputContainer.style.transform = 'translateY(0)';
+            inputContainer.style.transform = 'translate(0)';
           }
         };
-  
-        visualViewport?.addEventListener('resize', handleResize);
+      
+        visualViewport?.addEventListener('resize', handleViewportChange);
+        visualViewport?.addEventListener('scroll', handleViewportChange);
         
-        return () => visualViewport?.removeEventListener('resize', handleResize);
-    }, []);
+        return () => {
+          visualViewport?.removeEventListener('resize', handleViewportChange);
+          visualViewport?.removeEventListener('scroll', handleViewportChange);
+        };
+      }, []);
 
     return (
         <div className="flex w-full min-h-[100dvh] items-center justify-center max-w-[430px]">
