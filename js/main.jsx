@@ -845,7 +845,7 @@ const ImageFrameMerger = ({
                                 }}
                                 >
                                     <img
-                                        className="button-width"
+                                        className="h-[42.57px]"
                                         src={config.buttons.confirmButton}
                                         alt="confirm"
                                     />
@@ -856,7 +856,7 @@ const ImageFrameMerger = ({
                                 }}
                                 >
                                     <img
-                                        className="button-width"
+                                        className="h-[42.57px]"
                                         src={config.buttons.cancelButton}
                                         alt="cancel"
                                     />
@@ -1052,7 +1052,8 @@ const ResultPage = memo(
 
                     <div
                         className="lottery-rule-content flex flex-col justify-center items-center align-center w-full max-w-[350px] 
-                    border-2 border-black rounded-3xl bg-white mb-6 pt-3 pb-4 font-semibold text-sm"
+                        border-2 border-black rounded-3xl bg-white mb-6 pt-3 pb-4 font-semibold text-sm cursor-pointer"
+                        onClick={() => window.open(config.links.INSTAGRAM)}
                     >
                         <ol className="tracking-tight mb-4">
                             <li className="">

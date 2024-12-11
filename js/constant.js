@@ -175,7 +175,8 @@ const STORAGE_DATA = {
         MOMO:"https://www.momoshop.com.tw/category/DgrpCategory.jsp?d_code=4700100067&p_orderType=6&showType=chessboardType&attr=%7B%22%26%2337325%3B%26%2337327%3B%22%3A%5B%226kg%26%23126%3B10kg%22%5D%7D&attrNo=%7B%22%26%2337325%3B%26%2337327%3B%22%3A%5B%22A0012G0003C0002%22%5D%7D&mAttL=%5B%22%26%2337325%3B%26%2337327%3B%22%5D",
         PCHOME:"https://24h.pchome.com.tw/store/DEAKWF",
         COUPANG:"https://www.tw.coupang.com/products/ARM%26HAMMER-%E9%A0%82%E7%B4%9A%E9%99%A4%E8%87%AD%E8%B2%93%E7%A0%82-452665263734784?vendorItemId=458122208460802&sourceType=SDP_ALSO_VIEWED&searchId=807dbfbd6a43419f929fd52299d5dc94",
-        SUPERMEDIA:"https://www.supermedia.cool/"
+        SUPERMEDIA:"https://www.supermedia.cool/",
+        INSTAGRAM:"https://www.instagram.com/ttshow.tw/"
       },
       litterLinks: {
         'premium-sensitive': 'https://reurl.cc/VMOnOZ',
