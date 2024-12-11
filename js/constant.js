@@ -1,5 +1,6 @@
 const STORAGE_DATA = {
     config: {
+      background: "/test-dom/images/backgrounds/desktop-background.png",
       // background
       cardStart: "/test-dom/images/backgrounds/index-bg.png",
       cardCloud: "/test-dom/images/backgrounds/prepare-bg.png",
@@ -93,6 +94,8 @@ const STORAGE_DATA = {
         // momoButton: "/test-dom/images/buttons/momo-button.png",
         // pchomeButton: "/test-dom/images/buttons/pchome-button.png",
         coupangButton: "/test-dom/images/buttons/coupang-button.png",
+        cancelButton: "/test-dom/images/buttons/cancel-button.png",
+        confirmButton: "/test-dom/images/buttons/confirm-button.png",
         '1A': "/test-dom/images/question/1-A.png",
         '1B': "/test-dom/images/question/1-B.png",
         '2A': "/test-dom/images/question/2-A.png",

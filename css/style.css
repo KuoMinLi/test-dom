@@ -39,7 +39,7 @@ html, body {
 
 @media (max-width: 376px) {
   .button-width {
-    width: 152px;
+    width: 125px;
   }
   .button-answer-width {
     width: 180px;

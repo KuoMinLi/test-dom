@@ -1,15 +1,17 @@
 import React, {
+    forwardRef,
     memo,
     useState,
     useEffect,
     useMemo,
     useCallback,
+    useRef,
 } from "https://esm.sh/react@18.2.0";
 import ReactDOM from "https://esm.sh/react-dom@18.2.0";
 import STORAGE_DATA from "./js/constant.js";
-// import { Share2, Facebook } from "https://esm.sh/lucide-react@0.263.1";
+import ReactCrop from "https://esm.sh/react-image-crop@11.0.7";
 
-const MAX_FILE_SIZE = 100 * 1024 * 1024; // 5MB
+const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
 const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png"];
 const CANVAS_SCALE = 1.519;
 const CANVAS_WIDTH = 414;
@@ -53,7 +55,7 @@ const ProcessMarker = ({
   );
 };
 
-const CardFrame = memo(({ config, currentQuestionIndex, imgType }) => {
+  const CardFrame = memo(({ config, currentQuestionIndex, imgType }) => {
     const footprintPositions = [
         "top-[17px] left-[17px]",
         "top-[17px] right-[17px]",
@@ -115,7 +117,7 @@ const StartPage = memo(({ config, onStart, currentQuestionIndex }) => {
             <div className="relative w-full">
                 <CardFrame imgType="start" config={config} currentQuestionIndex={currentQuestionIndex} />
                 <button
-                    className="absolute bottom-[65px] left-[calc(50%-76px)]"
+                    className="absolute bottom-[65px] left-1/2 transform -translate-x-1/2"
                     onClick={onStart}
                 >
                     <img
@@ -457,11 +459,13 @@ const CloudCard = memo(({ children, config }) => {
     );
 });
 
-const FileUpload = ({ handleImageUpload, isLoading, config }) => {
+const FileUpload = forwardRef(
+    ({ handleImageUpload, isLoading, config }, ref) => {
     return (
         <div className="next-button relative inline-flex items-center">
             <input
                 type="file"
+                ref={ref}
                 accept="image/jpeg,image/png"
                 onChange={handleImageUpload}
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
@@ -478,7 +482,7 @@ const FileUpload = ({ handleImageUpload, isLoading, config }) => {
             </button>
         </div>
     );
-};
+});
 
 const ImageFrameMerger = ({
     config,
@@ -488,12 +492,19 @@ const ImageFrameMerger = ({
     mbtiResult,
     recommendedLitter,
     catName,
-}) => {
-    const [uploadedImage, setUploadedImage] = useState(null);
+  }) => {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [frameImage, setFrameImage] = useState(null);
-
+  
+    const [imgSrc, setImgSrc] = useState("");
+    const [crop, setCrop] = useState();
+    const [completedCrop, setCompletedCrop] = useState();
+    const [isShow, setIsShow] = useState(false);
+    const imgRef = useRef(null);
+    const previewCanvasRef = useRef(null);
+    const fileInputRef = useRef(null);
+  
     useEffect(() => {
         const loadFrameImage = async () => {
             try {
@@ -551,47 +562,99 @@ const ImageFrameMerger = ({
             // throw new SecurityError("File too large. Maximum size is 5MB.");
         }
     };
+    const resetAllStates = () => {
+      setImgSrc("");
+      setCrop(undefined);
+      setCompletedCrop(undefined);
+      setIsShow(false);
+      setIsLoading(false);
+      setError(null);
 
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    };
+  
+    const onSelectFile = (e) => {
+      if (e.target.files && e.target.files.length > 0) {
+        const reader = new FileReader();
+        reader.addEventListener("load", () => {
+          setImgSrc(reader.result.toString() || "");
+          setIsShow(true); // 確保在讀取完成後顯示裁切介面
+        });
+        reader.readAsDataURL(e.target.files[0]);
+      }
+    }
+  
+    const onImageLoad = (e) => {
+        const { width, height } = e.currentTarget;
+        // 設定初始裁切框的大小為圖片寬度的 50%
+        const initialSize = Math.min(width, height) * 0.5;
+        
+        setCrop({
+          unit: 'px',
+          width: initialSize,
+          height: initialSize,
+          x: (width - initialSize) / 2,
+          y: (height - initialSize) / 2
+        });
+      }
+  
+    const getCroppedImage = () => {
+      if (!completedCrop || !imgRef.current || !previewCanvasRef.current)
+        return null;
+  
+      const image = imgRef.current;
+      const canvas = previewCanvasRef.current;
+      const ctx = canvas.getContext("2d");
+  
+      const scaleX = image.naturalWidth / image.width;
+      const scaleY = image.naturalHeight / image.height;
+  
+      const scaleFactor = 5;
+      canvas.width = completedCrop.width * scaleFactor;
+      canvas.height = completedCrop.height * scaleFactor;
+  
+      // 確保繪圖時使用高品質
+      ctx.imageSmoothingQuality = "high";
+      ctx.imageSmoothingEnabled = true;
+  
+      ctx.drawImage(
+        image,
+        completedCrop.x * scaleX,
+        completedCrop.y * scaleY,
+        completedCrop.width * scaleX,
+        completedCrop.height * scaleY,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+  
+      return new Promise((resolve) => {
+        const croppedImage = new Image();
+        croppedImage.crossOrigin = "anonymous";
+        croppedImage.onload = () => {
+          resolve(croppedImage);
+        };
+        croppedImage.src = canvas.toDataURL("image/png", 1.0);
+      });
+    }
+  
     const handleImageUpload = async (event) => {
-        try {
-            setError(null);
-            setIsLoading(true);
-
-            const file = event.target.files[0];
-            validateImage(file);
-
-            const reader = new FileReader();
-
-            reader.onload = (e) => {
-                const img = new Image();
-
-                img.onload = () => {
-                    setUploadedImage(img);
-                    if (frameImage) {
-                        mergeImages(img, frameImage);
-                    }
-                    setIsLoading(false);
-                };
-
-                img.onerror = () => {
-                    // throw new Error("Failed to load uploaded image");
-                    errorAlert("無法載入上傳的照片，請重試");
-                };
-
-                img.src = e.target.result;
-            };
-
-            reader.onerror = () => {
-                errorAlert("無法讀取檔案，請重試");
-                // throw new Error("Failed to read file");
-            };
-
-            reader.readAsDataURL(file);
-        } catch (err) {
-            setError(err.message);
-            setIsLoading(false);
-            console.error("Upload error:", err);
-        }
+      try {
+        setError(null);
+        setIsLoading(true);
+  
+        const file = event.target.files[0];
+        validateImage(file);
+        onSelectFile(event);
+        setIsLoading(false);
+      } catch (err) {
+        setError(err.message);
+        console.error("Upload error:", err);
+        resetAllStates();
+      }
     };
 
     const mergeImages = (userImage, frame) => {
@@ -614,49 +677,12 @@ const ImageFrameMerger = ({
 
             // 繪製使用者照片
             if (userImage) {
-                const targetWidth = 120 * CANVAS_SCALE;
-                const targetHeight = 125 * CANVAS_SCALE;
+                const targetWidth = 150 * CANVAS_SCALE;
+                const targetHeight = 140 * CANVAS_SCALE;
                 const targetX = (canvas.width - targetWidth) / 2 + (90 * CANVAS_SCALE);
-                const targetY = 80 * CANVAS_SCALE;
-
-                // 創建一個臨時的canvas來處理使用者圖片的背景
-                const tempCanvas = document.createElement("canvas");
-                const tempCtx = tempCanvas.getContext("2d");
-                tempCanvas.width = targetWidth * 5;
-                tempCanvas.height = targetHeight * 5;
-
-                // 在臨時canvas上填充白色背景
-                tempCtx.fillStyle = "#FFFFFF";
-                tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-
-                const scaleWidth = tempCanvas.width / userImage.width;
-                const scaleHeight = tempCanvas.height / userImage.height;
-                const scale = Math.min(scaleWidth, scaleHeight);
-
-                const scaledWidth = userImage.width * scale;
-                const scaledHeight = userImage.height * scale;
-
-                const offsetX = (tempCanvas.width - scaledWidth) / 2;
-                const offsetY = (tempCanvas.height - scaledHeight) / 2;
-
-                // 在臨時canvas上繪製縮放後的圖片
-                tempCtx.drawImage(
-                    userImage,
-                    offsetX,
-                    offsetY,
-                    scaledWidth,
-                    scaledHeight
-                );
-
-                // 將臨時canvas的內容繪製到主canvas上
-                ctx.drawImage(
-                    tempCanvas,
-                    targetX,
-                    targetY,
-                    targetWidth,
-                    targetHeight
-                );
-            }
+                const targetY = 70 * CANVAS_SCALE;  
+                ctx.drawImage(userImage, targetX, targetY, targetWidth, targetHeight);
+        }
             // 2. 畫背景圖（根據是否有上傳照片選擇不同背景）
             const baseImage = new Image();
             baseImage.crossOrigin = "anonymous";
@@ -761,6 +787,7 @@ const ImageFrameMerger = ({
                         />
                     </button>
                     <FileUpload
+                        ref={fileInputRef}
                         handleImageUpload={handleImageUpload}
                         isLoading={isLoading}
                         config={config}
@@ -770,10 +797,81 @@ const ImageFrameMerger = ({
                 {error && <p className="text-red-500 mb-4">{error}</p>}
                 {isLoading && <p>Loading...</p>}
             </div>
+                <div
+                    className={`fixed inset-0 z-50 bg-opacity-100 bg-cover bg-no-repeat flex items-center justify-center 
+                        ${ isShow ? "" : "hidden"}
+                         bg-[url('${config.background}')]
+                    `}
+                >
+                <div className="absolute inset-0 bg-black/50" />
+                <div className="relative p-4 max-w-md mx-auto">
+                    <div className="space-y-4">
+                    {imgSrc && (
+                        <div className="mt-4 flex flex-col items-center">
+                        <ReactCrop
+                            crop={crop}
+                            onChange={(_, percentCrop) => setCrop(percentCrop)}
+                            onComplete={(c) => setCompletedCrop(c)}
+                            aspect={1}
+                            className="max-h-[70vh]"
+                            minWidth={100}  // 設定最小寬度
+                            maxWidth={500}  // 設定最大寬度
+                            locked={false}  // 解鎖大小調整
+                            keepSelection={true}  // 保持選擇框
+                            unit="px"
+                        >
+                            <img
+                            ref={imgRef}
+                            alt="Crop me"
+                            src={imgSrc}
+                            onLoad={onImageLoad}
+                            className="max-w-full"
+                            />
+                        </ReactCrop>
+                        <div className="flex justify-center gap-4 mt-4">
+                            <button
+                            onClick={async () => {
+                                const croppedImage = await getCroppedImage();
+                                if (croppedImage && frameImage) {
+                                mergeImages(croppedImage, frameImage);
+                                resetAllStates();
+                                }
+                            }}
+                            >
+                                <img
+                                    className="button-width"
+                                    src={config.buttons.confirmButton}
+                                    alt="confirm"
+                                />
+                            </button>
+                            <button
+                            onClick={() => {
+                                resetAllStates();
+                            }}
+                            >
+                                <img
+                                    className="button-width"
+                                    src={config.buttons.cancelButton}
+                                    alt="cancel"
+                                />
+                            </button>
+                        </div>
+                        </div>
+                    )}
+                    </div>
+                </div>
+                <canvas
+                    ref={previewCanvasRef}
+                    className="hidden"
+                    style={{
+                    width: completedCrop?.width ?? 0,
+                    height: completedCrop?.height ?? 0,
+                    }}
+                />
+            </div>
         </CloudCard>
     );
-};
-
+  };
 const ResultPage = memo(
     ({
         mbtiResult,
