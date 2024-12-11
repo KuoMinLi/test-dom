@@ -711,6 +711,7 @@ const ImageFrameMerger = ({
                         drawText();
                         const mergedUrl = canvas.toDataURL("image/png");
                         onImageMerged(mergedUrl);
+                        setIsLoading(false);
                     };
                     litterImage.src = config.litter[recommendedLitter];
                 } else {
@@ -718,6 +719,7 @@ const ImageFrameMerger = ({
                     drawText();
                     const mergedUrl = canvas.toDataURL("image/png");
                     onImageMerged(mergedUrl);
+                    setIsLoading(false);
                 }
             };
 
@@ -760,116 +762,122 @@ const ImageFrameMerger = ({
     };
 
     return (
-        <CloudCard config={config}>
-            <div
-                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center 
-                  w-full px-8 flex flex-col items-center justify-center gap-6"
-            >
-                <h2 className="text-xl mb-6 whitespace-pre-line font-semibold">
-                    {`上傳一張 ${catName} 的\n可愛照片吧！`}
-                </h2>
-                <img
-                    className="max-w-[200px] mx-auto"
-                    src={config.crystalBall}
-                    alt="crystal-ball"
-                />
-                <div className="flex justify-center gap-4">
-                    <button
-                        onClick={() => {
-                            mergeImages(null, frameImage); // 在這邊呼叫 mergeImages
-                            onSkip(); // 通知父組件關閉上傳介面
-                        }}
-                    >
-                        <img
-                            className="skip-button button-width"
-                            src={config.buttons.skipButton}
-                            alt="skip"
-                        />
-                    </button>
-                    <FileUpload
-                        ref={fileInputRef}
-                        handleImageUpload={handleImageUpload}
-                        isLoading={isLoading}
-                        config={config}
-                    />
-                </div>
-
-                {error && <p className="text-red-500 mb-4">{error}</p>}
-                {isLoading && <p>Loading...</p>}
-            </div>
+        <>
+        {isLoading ? (
+            <LoadingPage config={config} />
+        ) : (
+            <CloudCard config={config}>
                 <div
-                    className={`fixed inset-0 z-50 bg-opacity-100 bg-cover bg-no-repeat flex items-center justify-center 
-                        ${ isShow ? "" : "hidden"}
-                         bg-[url('${config.background}')]
-                    `}
+                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center 
+                    w-full px-8 flex flex-col items-center justify-center gap-6"
                 >
-                <div className="absolute inset-0 bg-black/50" />
-                <div className="relative p-4 max-w-md mx-auto">
-                    <div className="space-y-4">
-                    {imgSrc && (
-                        <div className="mt-4 flex flex-col items-center">
-                        <ReactCrop
-                            crop={crop}
-                            onChange={(_, percentCrop) => setCrop(percentCrop)}
-                            onComplete={(c) => setCompletedCrop(c)}
-                            aspect={1}
-                            className="max-h-[70vh]"
-                            minWidth={100}  // 設定最小寬度
-                            maxWidth={500}  // 設定最大寬度
-                            locked={false}  // 解鎖大小調整
-                            keepSelection={true}  // 保持選擇框
-                            unit="px"
+                    <h2 className="text-xl mb-6 whitespace-pre-line font-semibold">
+                        {`上傳一張 ${catName} 的\n可愛照片吧！`}
+                    </h2>
+                    <img
+                        className="max-w-[200px] mx-auto"
+                        src={config.crystalBall}
+                        alt="crystal-ball"
+                    />
+                    <div className="flex justify-center gap-4">
+                        <button
+                            onClick={() => {
+                                mergeImages(null, frameImage); // 在這邊呼叫 mergeImages
+                                onSkip(); // 通知父組件關閉上傳介面
+                            }}
                         >
                             <img
-                            ref={imgRef}
-                            alt="Crop me"
-                            src={imgSrc}
-                            onLoad={onImageLoad}
-                            className="max-w-full"
+                                className="skip-button button-width"
+                                src={config.buttons.skipButton}
+                                alt="skip"
                             />
-                        </ReactCrop>
-                        <div className="flex justify-center gap-4 mt-4">
-                            <button
-                            onClick={async () => {
-                                const croppedImage = await getCroppedImage();
-                                if (croppedImage && frameImage) {
-                                mergeImages(croppedImage, frameImage);
-                                resetAllStates();
-                                }
-                            }}
-                            >
-                                <img
-                                    className="button-width"
-                                    src={config.buttons.confirmButton}
-                                    alt="confirm"
-                                />
-                            </button>
-                            <button
-                            onClick={() => {
-                                resetAllStates();
-                            }}
-                            >
-                                <img
-                                    className="button-width"
-                                    src={config.buttons.cancelButton}
-                                    alt="cancel"
-                                />
-                            </button>
-                        </div>
-                        </div>
-                    )}
+                        </button>
+                        <FileUpload
+                            ref={fileInputRef}
+                            handleImageUpload={handleImageUpload}
+                            isLoading={isLoading}
+                            config={config}
+                        />
                     </div>
+
+                    {error && <p className="text-red-500 mb-4">{error}</p>}
                 </div>
-                <canvas
-                    ref={previewCanvasRef}
-                    className="hidden"
-                    style={{
-                    width: completedCrop?.width ?? 0,
-                    height: completedCrop?.height ?? 0,
-                    }}
-                />
-            </div>
-        </CloudCard>
+                    <div
+                        className={`fixed inset-0 z-50 bg-opacity-100 bg-cover bg-no-repeat flex items-center justify-center 
+                            ${ isShow ? "" : "hidden"}
+                            bg-[url('${config.background}')]
+                        `}
+                    >
+                    <div className="absolute inset-0 bg-black/50" />
+                    <div className="relative p-4 max-w-md mx-auto">
+                        <div className="space-y-4">
+                        {imgSrc && (
+                            <div className="mt-4 flex flex-col items-center">
+                            <ReactCrop
+                                crop={crop}
+                                onChange={(_, percentCrop) => setCrop(percentCrop)}
+                                onComplete={(c) => setCompletedCrop(c)}
+                                aspect={1}
+                                className="max-h-[70vh]"
+                                minWidth={100}  // 設定最小寬度
+                                maxWidth={500}  // 設定最大寬度
+                                locked={false}  // 解鎖大小調整
+                                keepSelection={true}  // 保持選擇框
+                                unit="px"
+                            >
+                                <img
+                                ref={imgRef}
+                                alt="Crop me"
+                                src={imgSrc}
+                                onLoad={onImageLoad}
+                                className="max-w-full"
+                                />
+                            </ReactCrop>
+                            <div className="flex justify-center gap-4 mt-4">
+                                <button
+                                onClick={async () => {
+                                    const croppedImage = await getCroppedImage();
+                                    if (croppedImage && frameImage) {
+                                    setIsLoading(true);
+                                    mergeImages(croppedImage, frameImage);
+                                    setIsShow(false);
+                                    }
+                                }}
+                                >
+                                    <img
+                                        className="button-width"
+                                        src={config.buttons.confirmButton}
+                                        alt="confirm"
+                                    />
+                                </button>
+                                <button
+                                onClick={() => {
+                                    resetAllStates();
+                                }}
+                                >
+                                    <img
+                                        className="button-width"
+                                        src={config.buttons.cancelButton}
+                                        alt="cancel"
+                                    />
+                                </button>
+                            </div>
+                            </div>
+                        )}
+                        </div>
+                    </div>
+                    <canvas
+                        ref={previewCanvasRef}
+                        className="hidden"
+                        style={{
+                        width: completedCrop?.width ?? 0,
+                        height: completedCrop?.height ?? 0,
+                        }}
+                    />
+                </div>
+            </CloudCard>
+        )}
+    </>
     );
   };
 const ResultPage = memo(
