@@ -125,11 +125,13 @@ img[src*="crystal-ball"] {
   75.1%, 100% { transform: rotate(0deg); }
 }
 
-button:hover img,
-a:hover img,
-img[role="button"]:hover {
-  filter: brightness(1.2);
-  transition: filter 0.3s ease;
+@media (min-width: 1024px) {
+  button:hover img,
+  a:hover img,
+  img[role="button"]:hover {
+    filter: brightness(1.2);
+    transition: filter 0.3s ease;
+  }
 }
 
 button, 
